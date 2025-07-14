@@ -1,0 +1,21 @@
+// src/utils/backgroundMapping.js
+export const weatherBgMapping = {
+  "01d": "clear-day.jpg",
+  "01n": "clear-night.jpg",
+  "02d": "partly-cloudy-day.jpg",
+  "02n": "partly-cloudy-night.jpg",
+  "03d": "cloudy.jpg",
+  "03n": "cloudy.jpg",
+  "04d": "overcast.jpg",
+  "04n": "overcast.jpg",
+  "09d": "rain.jpg",
+  "09n": "rain.jpg",
+  "10d": "rain.jpg",
+  "10n": "rain.jpg",
+  "11d": "thunderstorm.jpg",
+  "11n": "thunderstorm.jpg",
+  "13d": "snow.jpg",
+  "13n": "snow.jpg",
+  "50d": "mist.jpg",
+  "50n": "mist.jpg",
+};

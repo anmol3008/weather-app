@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { fetchWeather, fetchForecast, fetchAQI } from "./api/weather";
 import WeatherCard from "./components/WeatherCard";
 import "./App.css";
+import { weatherBgMapping } from "./utils/backgroundMapping"; // Make sure this file exists with correct mapping
 
 // Helper to group forecast data by day and get max/min/icon/desc
 function getDailyForecast(forecastList) {
@@ -46,6 +47,13 @@ export default function App() {
 
   // Autocomplete suggestions state
   const [suggestions, setSuggestions] = useState([]);
+
+  // Determine background image based on weather icon
+  let bgImage = "default.jpg"; // fallback background image filename
+  if (weather && weather.weather && weather.weather[0]) {
+    const icon = weather.weather[0].icon;
+    bgImage = weatherBgMapping[icon] || "default.jpg";
+  }
 
   // Fetch weather by city name
   async function getWeatherData(cityName = city, unitsVal = units) {
@@ -128,13 +136,11 @@ export default function App() {
   async function fetchSuggestions(query) {
     if (!query) return setSuggestions([]);
     try {
-      // Example using GeoDB Cities API (replace with your API key)
-      // You can sign up at RapidAPI for a key: https://rapidapi.com/wirefreethought/api/geodb-cities/
       const res = await fetch(
         `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${query}&limit=5`,
         {
           headers: {
-            "X-RapidAPI-Key": "cd42d420f2msh1d2c8fc861fea31p1c1838jsn5193ba0cc508", // <-- Replace with your RapidAPI key
+            "X-RapidAPI-Key": "cd42d420f2msh1d2c8fc861fea31p1c1838jsn5193ba0cc508", // Replace with your API key
             "X-RapidAPI-Host": "wft-geo-db.p.rapidapi.com"
           }
         }
@@ -142,7 +148,6 @@ export default function App() {
       const data = await res.json();
       setSuggestions(data.data.map(city => city.city));
     } catch (err) {
-      // Ignore autocomplete errors
       setSuggestions([]);
     }
   }
@@ -170,7 +175,16 @@ export default function App() {
   }, [units]);
 
   return (
-    <div className="weather-app">
+    <div
+      className="weather-app"
+      style={{
+        backgroundImage: `url(${process.env.PUBLIC_URL}/backgrounds/${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "100vh",
+        transition: "background-image 0.5s ease-in-out"
+      }}
+    >
       <h1 className="main-title">Weather App</h1>
 
       {/* Favourites List */}
