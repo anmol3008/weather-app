@@ -110,6 +110,14 @@ body {
   background: linear-gradient(90deg, #5a67d8 60%, #6c47a2 100%);
 }
 
+.favourites-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+
 /* Error Message */
 .error-message {
   color: var(--error-color);
