@@ -122,6 +122,13 @@
   text-align: right;
 }
 
+.current-datetime {
+  font-size: 1.05em;
+  color: #555;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
 /* Responsive improvements for mobile */
 @media (max-width: 700px) {
   .weather-details {
@@ -160,10 +167,11 @@
   }
 }
 
-/* --- Forecast Section (unchanged) --- */
+/* --- Forecast Section (Fixed with Hover Zoom Support) --- */
 .forecast-section {
   margin-top: 18px;
 }
+
 .forecast-title {
   text-align: center;
   color: #667eea;
@@ -172,45 +180,54 @@
   margin-bottom: 10px;
   letter-spacing: 1px;
 }
+
 .forecast-row {
   display: flex;
   gap: 22px;
   justify-content: center;
   align-items: stretch;
-  overflow-x: auto;
+  overflow: visible; /* ✅ Allow forecast cards to scale outside the row */
   padding-bottom: 12px;
   margin-top: 10px;
   scrollbar-width: thin;
   scrollbar-color: #667eea #f0f0f0;
 }
+
 .forecast-row::-webkit-scrollbar {
   height: 6px;
 }
+
 .forecast-row::-webkit-scrollbar-thumb {
   background: #667eea;
   border-radius: 8px;
 }
+
 .forecast-item {
   min-width: 135px;
   max-width: 160px;
   background: linear-gradient(135deg, #e0e7ff 60%, #f8fafc 100%);
   border-radius: 20px;
-  box-shadow: 0 2px 12px rgba(102,126,234,0.13);
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.13);
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px 10px 16px 10px;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: box-shadow 0.2s, transform 0.2s, z-index 0.2s;
   position: relative;
   cursor: pointer;
   border: 1.5px solid #e0e7ff;
+  margin: 16px 0; /* ✅ Add vertical margin to prevent cropping */
+  z-index: 1;      /* ✅ Ensure stacking context */
 }
+
 .forecast-item:hover {
   transform: translateY(-6px) scale(1.05);
-  box-shadow: 0 8px 32px rgba(102,126,234,0.18);
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.18);
   border: 1.5px solid #667eea;
+  z-index: 10; /* ✅ Bring hovered card above others */
 }
+
 .forecast-day {
   font-weight: 700;
   color: #667eea;
@@ -218,6 +235,7 @@
   font-size: 1.12em;
   letter-spacing: 0.5px;
 }
+
 .forecast-icon-wrapper {
   display: flex;
   align-items: center;
@@ -227,14 +245,16 @@
   width: 60px;
   height: 60px;
   margin: 0 auto 8px auto;
-  box-shadow: 0 2px 8px rgba(58,123,213,0.10);
+  box-shadow: 0 2px 8px rgba(58, 123, 213, 0.10);
 }
+
 .forecast-icon {
   width: 50px;
   height: 50px;
   margin: 0;
-  filter: drop-shadow(0 2px 8px rgba(102,126,234,0.14));
+  filter: drop-shadow(0 2px 8px rgba(102, 126, 234, 0.14));
 }
+
 .forecast-temps {
   display: flex;
   gap: 8px;
@@ -242,15 +262,18 @@
   align-items: baseline;
   margin-bottom: 4px;
 }
+
 .temp-max {
   font-size: 1.25em;
   font-weight: bold;
   color: #222;
 }
+
 .temp-min {
   font-size: 1em;
   color: #888;
 }
+
 .forecast-desc {
   font-size: 0.97em;
   color: #666;

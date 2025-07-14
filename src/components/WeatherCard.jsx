@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Lottie from "lottie-react";
 
 import cloudyNight from "../animations/cloudy-night.json";
@@ -48,6 +48,13 @@ function formatTime(unix, timezone) {
 export default function WeatherCard({ weather, units, onUnitChange, forecast, aqi }) {
   if (!weather) return null;
 
+  // Live date and time state
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const { name, main, weather: weatherArr, wind, sys, timezone } = weather;
   const weatherType = weatherArr[0];
   const animationKey = weatherToAnimation(weatherType);
@@ -73,6 +80,11 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast, aq
           <div className="temperature">
             {Math.round(main.temp)}°
             <span>{units === "metric" ? "C" : "F"}</span>
+          </div>
+          {/* Date and time */}
+          <div className="current-datetime">
+            {now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}{" "}
+            {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
           <p className="weather-description">{weatherType.description}</p>
           <div className="unit-switch">

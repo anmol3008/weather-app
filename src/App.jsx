@@ -72,6 +72,7 @@ export default function App() {
       } else {
         setAqi(null);
       }
+      setCity(data.name); // Ensure city is updated to canonical name
     } catch (err) {
       setError(err.message || "Failed to fetch weather data.");
       setWeather(null);
@@ -178,21 +179,47 @@ export default function App() {
       <div className="weather-app">
         <h1 className="main-title">Weather App</h1>
 
-        {favourites.length > 0 && (
-          <div className="favourites-list" style={{ marginBottom: 12 }}>
-            {favourites.map(fav => (
-              <button
-                key={fav}
-                className="search-btn"
-                style={{ marginRight: 8, marginBottom: 4, background: "#e0e7ff", color: "#222" }}
-                onClick={() => setCity(fav)}
-                type="button"
-              >
-                {fav}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Favourites List and Add Button */}
+        <div className="favourites-list" style={{ marginBottom: 12, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+          {favourites.map(fav => (
+            <button
+              key={fav}
+              className="search-btn favourite-btn"
+              style={{
+                marginRight: 4,
+                marginBottom: 4,
+                background: "#e0e7ff",
+                color: "#222",
+                display: "flex",
+                alignItems: "center",
+                fontWeight: "bold"
+              }}
+              onClick={() => getWeatherData(fav)}
+              type="button"
+            >
+              <span style={{ marginRight: 6, color: "#ff3366", fontSize: "1.1em" }}>❤️</span>
+              {fav}
+            </button>
+          ))}
+          {weather && !favourites.includes(city) && (
+            <button
+              className="search-btn favourite-btn"
+              style={{
+                background: "#ffebee",
+                color: "#c62828",
+                marginLeft: 6,
+                fontWeight: "bold",
+                display: "inline-flex",
+                alignItems: "center"
+              }}
+              onClick={() => addFavourite(city)}
+              type="button"
+            >
+              <span style={{ marginRight: 6, fontSize: "1.2em" }}>🤍</span>
+              Add to Favourites
+            </button>
+          )}
+        </div>
 
         <form className="search-form" onSubmit={handleSearch}>
           <input
@@ -242,26 +269,16 @@ export default function App() {
           aqi={aqi}
         />
 
-        {weather && (
-          favourites.includes(city) ? (
-            <button
-              className="search-btn"
-              style={{ background: "#f44336", marginTop: 12 }}
-              onClick={() => removeFavourite(city)}
-              type="button"
-            >
-              Remove from Favourites
-            </button>
-          ) : (
-            <button
-              className="search-btn"
-              style={{ background: "#4caf50", marginTop: 12 }}
-              onClick={() => addFavourite(city)}
-              type="button"
-            >
-              Add to Favourites
-            </button>
-          )
+        {weather && favourites.includes(city) && (
+          <button
+            className="search-btn"
+            style={{ background: "#f44336", marginTop: 12, fontWeight: "bold" }}
+            onClick={() => removeFavourite(city)}
+            type="button"
+          >
+            <span style={{ marginRight: 6, fontSize: "1.1em" }}>💔</span>
+            Remove from Favourites
+          </button>
         )}
       </div>
     </>
