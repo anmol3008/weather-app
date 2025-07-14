@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchWeather, fetchForecast } from "./api/weather";
+import { fetchWeather, fetchForecast, fetchAQI } from "./api/weather";
 import WeatherCard from "./components/WeatherCard";
 import "./App.css";
 
@@ -11,7 +11,6 @@ function getDailyForecast(forecastList) {
     if (!daily[date]) daily[date] = [];
     daily[date].push(item);
   });
-  // For each day, pick max/min temp and the icon/desc closest to midday
   return Object.values(daily)
     .slice(0, 5)
     .map(dayArr => {
@@ -37,6 +36,7 @@ export default function App() {
   const [units, setUnits] = useState("metric");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [aqi, setAqi] = useState(null);
 
   async function getWeatherData(cityName = city, unitsVal = units) {
     setLoading(true);
@@ -48,10 +48,19 @@ export default function App() {
 
       const forecastData = await fetchForecast(cityName, unitsVal);
       setForecast(getDailyForecast(forecastData.list));
+
+      // Fetch AQI if coordinates are available
+      if (data.coord) {
+        const aqiData = await fetchAQI(data.coord.lat, data.coord.lon);
+        setAqi(aqiData.list && aqiData.list[0]);
+      } else {
+        setAqi(null);
+      }
     } catch (err) {
       setError(err.message || "Failed to fetch weather data.");
       setWeather(null);
       setForecast([]);
+      setAqi(null);
     }
     setLoading(false);
   }
@@ -67,11 +76,16 @@ export default function App() {
 
       const forecastData = await fetchForecast({ lat, lon }, unitsVal);
       setForecast(getDailyForecast(forecastData.list));
-      setCity(data.name); // Update city input to detected city name
+      setCity(data.name);
+
+      // Fetch AQI
+      const aqiData = await fetchAQI(lat, lon);
+      setAqi(aqiData.list && aqiData.list[0]);
     } catch (err) {
       setError(err.message || "Failed to fetch weather data.");
       setWeather(null);
       setForecast([]);
+      setAqi(null);
     }
     setLoading(false);
   }
@@ -94,13 +108,11 @@ export default function App() {
     );
   }
 
-  // Fetch on mount and when units change
   useEffect(() => {
     getWeatherData();
     // eslint-disable-next-line
   }, [units]);
 
-  // Handle search submit (prevents reload)
   function handleSearch(e) {
     e.preventDefault();
     getWeatherData(city);
@@ -108,10 +120,7 @@ export default function App() {
 
   return (
     <div className="weather-app">
-      {/* --- SINGLE MODERN TITLE --- */}
       <h1 className="main-title">Weather App</h1>
-      {/* --- END TITLE --- */}
-
       <form className="search-form" onSubmit={handleSearch}>
         <input
           className="search-input"
@@ -147,6 +156,7 @@ export default function App() {
         units={units}
         onUnitChange={setUnits}
         forecast={forecast}
+        aqi={aqi}
       />
     </div>
   );

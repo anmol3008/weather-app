@@ -31,3 +31,12 @@ export async function fetchForecast(query, units = "metric") {
   const res = await fetch(url);
   return res.json();
 }
+
+
+export async function fetchAQI(lat, lon) {
+  const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+  const url = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+  const res = await fetch(url);
+  return res.json();
+}
+

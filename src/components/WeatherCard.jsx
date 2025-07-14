@@ -1,11 +1,28 @@
 import React from "react";
 import "./WeatherCard.css";
 
-export default function WeatherCard({ weather, units, onUnitChange, forecast }) {
+function formatTime(unix, timezone) {
+  // unix and timezone are both in seconds
+  const date = new Date((unix + timezone) * 1000);
+  // Use UTC time zone to avoid double offset
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'UTC'
+  });
+}
+
+
+
+export default function WeatherCard({ weather, units, onUnitChange, forecast, aqi }) {
   if (!weather) return null;
 
-  const { name, main, weather: weatherArr, wind } = weather;
+  const { name, main, weather: weatherArr, wind, sys, timezone } = weather;
   const weatherType = weatherArr[0];
+
+  // AQI scale: 1-Good, 2-Fair, 3-Moderate, 4-Poor, 5-Very Poor
+  const aqiLevel = aqi ? ["Good", "Fair", "Moderate", "Poor", "Very Poor"][aqi.main.aqi - 1] : null;
 
   return (
     <div className="weather-card">
@@ -49,6 +66,24 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast }) 
           <span className="detail-label">Wind</span>
           <span className="detail-value">
             {wind.speed} {units === "metric" ? "m/s" : "mph"}
+          </span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Sunrise</span>
+          <span className="detail-value">
+            {sys && formatTime(sys.sunrise, timezone)}
+          </span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Sunset</span>
+          <span className="detail-value">
+            {sys && formatTime(sys.sunset, timezone)}
+          </span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Air Quality</span>
+          <span className="detail-value">
+            {aqi ? `${aqi.main.aqi} (${aqiLevel})` : "N/A"}
           </span>
         </div>
       </div>
