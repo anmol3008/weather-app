@@ -70,7 +70,10 @@ export default function App() {
 
   return (
     <div className="weather-app">
-      <h1 className="app-title">Weather App</h1>
+      {/* --- SINGLE MODERN TITLE --- */}
+      <h1 className="main-title">Weather App</h1>
+      {/* --- END TITLE --- */}
+
       <form className="search-form" onSubmit={handleSearch}>
         <input
           className="search-input"
