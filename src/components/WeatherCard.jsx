@@ -1,5 +1,5 @@
 import React from "react";
-import './WeatherCard.css';
+import "./WeatherCard.css";
 
 export default function WeatherCard({ weather, units, onUnitChange, forecast }) {
   if (!weather) return null;
@@ -9,7 +9,6 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast }) 
 
   return (
     <div className="weather-card">
-      {/* --- Current Weather --- */}
       <div className="current-weather-row">
         <div className="weather-icon-wrapper">
           <img
@@ -41,8 +40,6 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast }) 
           </div>
         </div>
       </div>
-
-      {/* --- Weather Details --- */}
       <div className="weather-details">
         <div className="detail-item">
           <span className="detail-label">Humidity</span>
@@ -55,8 +52,6 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast }) 
           </span>
         </div>
       </div>
-
-      {/* --- Forecast Section --- */}
       {forecast && forecast.length > 0 && (
         <div className="forecast-section">
           <h3 className="forecast-title">Next 5 Days</h3>

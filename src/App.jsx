@@ -56,6 +56,44 @@ export default function App() {
     setLoading(false);
   }
 
+  // Fetch weather by coordinates (for geolocation)
+  async function getWeatherByCoords(lat, lon, unitsVal = units) {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await fetchWeather({ lat, lon }, unitsVal);
+      if (data.cod !== 200) throw new Error(data.message);
+      setWeather(data);
+
+      const forecastData = await fetchForecast({ lat, lon }, unitsVal);
+      setForecast(getDailyForecast(forecastData.list));
+      setCity(data.name); // Update city input to detected city name
+    } catch (err) {
+      setError(err.message || "Failed to fetch weather data.");
+      setWeather(null);
+      setForecast([]);
+    }
+    setLoading(false);
+  }
+
+  // Handler for "Use My Location" button
+  function handleUseMyLocation() {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser.");
+      return;
+    }
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        getWeatherByCoords(position.coords.latitude, position.coords.longitude);
+      },
+      (err) => {
+        setError("Unable to retrieve your location.");
+        setLoading(false);
+      }
+    );
+  }
+
   // Fetch on mount and when units change
   useEffect(() => {
     getWeatherData();
@@ -84,6 +122,14 @@ export default function App() {
         />
         <button className="search-btn" type="submit">
           Search
+        </button>
+        <button
+          type="button"
+          className="search-btn"
+          style={{ background: "linear-gradient(90deg, #2193b0 60%, #6dd5ed 100%)" }}
+          onClick={handleUseMyLocation}
+        >
+          Use My Location
         </button>
       </form>
       {loading && (
