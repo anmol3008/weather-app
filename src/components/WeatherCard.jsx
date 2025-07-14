@@ -1,5 +1,6 @@
 import React from "react";
 import Lottie from "lottie-react";
+
 import cloudyNight from "../animations/cloudy-night.json";
 import night from "../animations/night.json";
 import rainyNight from "../animations/rainy-night.json";
@@ -10,6 +11,14 @@ import sunny from "../animations/sunny.json";
 import windy from "../animations/windy.json";
 import partlyCloudy from "../animations/partly-cloudy.json";
 import stormRain from "../animations/storm-rain.json";
+
+import precipitationIcon from '../assets/icons/precipitation.png';
+import humidityIcon from '../assets/icons/humidity.png';
+import windIcon from '../assets/icons/wind.png';
+import aqiIcon from '../assets/icons/aqi.png';
+import sunriseIcon from '../assets/icons/sunrise.png';
+import sunsetIcon from '../assets/icons/sunset.png';
+
 import { weatherToAnimation } from "../utils/weatherAnimationMap.js";
 import "./WeatherCard.css";
 
@@ -18,8 +27,8 @@ const animationMap = {
   night,
   "rainy-night": rainyNight,
   "partly-shower": partlyShower,
-  "partly-cloudy": partlyCloudy,   // <-- new
-  "storm-rain": stormRain,         // <-- new
+  "partly-cloudy": partlyCloudy,
+  "storm-rain": stormRain,
   snow,
   storm,
   sunny,
@@ -82,9 +91,59 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast, aq
           </div>
         </div>
       </div>
+
       <div className="weather-details">
-        {/* ...rest of your details... */}
+        <div className="detail-item">
+          <img src={humidityIcon} alt="Humidity" className="detail-icon" />
+          <span className="detail-label">Humidity</span>
+          <span className="detail-value">{main.humidity}%</span>
+        </div>
+
+        <div className="detail-item">
+          <img src={windIcon} alt="Wind" className="detail-icon" />
+          <span className="detail-label">Wind</span>
+          <span className="detail-value">
+            {wind.speed} {units === "metric" ? "m/s" : "mph"}
+          </span>
+        </div>
+
+        <div className="detail-item">
+          <img src={precipitationIcon} alt="Precipitation" className="detail-icon" />
+          <span className="detail-label">Precipitation</span>
+          <span className="detail-value">
+            {weather.rain?.["1h"]
+              ? `${weather.rain["1h"]} mm`
+              : weather.snow?.["1h"]
+              ? `${weather.snow["1h"]} mm`
+              : "0 mm"}
+          </span>
+        </div>
+
+        <div className="detail-item">
+          <img src={aqiIcon} alt="Air Quality" className="detail-icon" />
+          <span className="detail-label">Air Quality</span>
+          <span className="detail-value">
+            {aqi ? `${aqi.main.aqi} (${aqiLevel})` : "N/A"}
+          </span>
+        </div>
+
+        <div className="detail-item">
+          <img src={sunriseIcon} alt="Sunrise" className="detail-icon" />
+          <span className="detail-label">Sunrise</span>
+          <span className="detail-value">
+            {sys && formatTime(sys.sunrise, timezone)}
+          </span>
+        </div>
+
+        <div className="detail-item">
+          <img src={sunsetIcon} alt="Sunset" className="detail-icon" />
+          <span className="detail-label">Sunset</span>
+          <span className="detail-value">
+            {sys && formatTime(sys.sunset, timezone)}
+          </span>
+        </div>
       </div>
+
       {forecast && forecast.length > 0 && (
         <div className="forecast-section">
           <h3 className="forecast-title">Next 5 Days</h3>

@@ -74,47 +74,93 @@
   box-shadow: 0 2px 8px rgba(102,126,234,0.18);
 }
 
+/* --- Weather Details Section (with icons) --- */
 .weather-details {
   display: flex;
-  gap: 24px;
-  justify-content: center;
-  margin-top: 12px;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 18px;
 }
+
 .detail-item {
-  background: rgba(102,126,234,0.08);
-  padding: 18px 22px;
-  border-radius: 13px;
-  text-align: center;
-  min-width: 110px;
-  transition: background 0.2s, transform 0.2s;
+  flex: 1 1 45%;
   display: flex;
-  flex-direction: column;    /* <-- Stack label and value vertically */
-  align-items: center;       /* <-- Center them horizontally */
-  word-break: break-word;    /* <-- Prevent overflow */
-  box-sizing: border-box;    /* <-- Ensure padding is included in width */
+  align-items: center;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  min-width: 200px;
+  margin-bottom: 4px;
+}
+
+.detail-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(102,126,234,0.10));
 }
 
 .detail-label {
-  font-size: 0.92em;
+  font-size: 0.98em;
   color: #666;
-  margin-bottom: 4px;
-  text-transform: uppercase;
   font-weight: 600;
-  display: block;            /* <-- Ensure label is on its own line */
+  margin-right: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .detail-value {
-  font-size: 1.35em;
+  font-size: 1.15em;
   font-weight: bold;
   color: #333;
-  margin-top: 2px;           /* <-- Add a little space from label */
-  display: block;            /* <-- Ensure value is on its own line */
+  margin-left: auto;
+  /* Ensures value is right-aligned in the detail-item */
   word-break: break-word;
-  max-width: 100%;           /* <-- Prevent overflow */
+  max-width: 100px;
+  text-align: right;
 }
 
+/* Responsive improvements for mobile */
+@media (max-width: 700px) {
+  .weather-details {
+    gap: 10px;
+  }
+  .detail-item {
+    min-width: 140px;
+    padding: 8px 8px;
+  }
+  .detail-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 7px;
+  }
+}
 
-/* Forecast Section */
+@media (max-width: 600px) {
+  .weather-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+  }
+  .weather-details {
+    gap: 8px;
+  }
+  .detail-item {
+    min-width: 120px;
+    padding: 7px 6px;
+  }
+  .detail-label {
+    font-size: 0.9em;
+  }
+  .detail-value {
+    font-size: 1em;
+    max-width: 60px;
+  }
+}
+
+/* --- Forecast Section (unchanged) --- */
 .forecast-section {
   margin-top: 18px;
 }
@@ -211,26 +257,4 @@
   margin-top: 6px;
   text-transform: capitalize;
   min-height: 18px;
-}
-
-/* Existing styles */
-.weather-icon-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 60% 40%, #a8c0ff 60%, #f8fafc 100%);
-  border-radius: 50%;
-  width: 110px;
-  height: 110px;
-  margin-right: 18px;
-  box-shadow: 0 4px 18px rgba(58,123,213,0.12);
-}
-
-/* Responsive improvements for mobile */
-@media (max-width: 600px) {
-  .weather-icon-wrapper {
-    width: 60px;
-    height: 60px;
-    margin-right: 10px; /* Optional: reduce margin for smaller screens */
-  }
 }
