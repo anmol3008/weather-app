@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { fetchWeather, fetchForecast, fetchAQI } from "./api/weather";
 import WeatherCard from "./components/WeatherCard";
 import "./App.css";
-import { weatherBgMapping } from "./utils/backgroundMapping"; // Make sure this file exists with correct mapping
+import { weatherBgMapping } from "./utils/backgroundMapping";
 
-// Helper to group forecast data by day and get max/min/icon/desc
 function getDailyForecast(forecastList) {
   const daily = {};
   forecastList.forEach(item => {
@@ -38,24 +37,24 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [aqi, setAqi] = useState(null);
-
-  // Favourites state (persisted in localStorage)
   const [favourites, setFavourites] = useState(() => {
     const stored = localStorage.getItem("favourites");
     return stored ? JSON.parse(stored) : [];
   });
-
-  // Autocomplete suggestions state
   const [suggestions, setSuggestions] = useState([]);
 
-  // Determine background image based on weather icon
-  let bgImage = "default.jpg"; // fallback background image filename
-  if (weather && weather.weather && weather.weather[0]) {
-    const icon = weather.weather[0].icon;
-    bgImage = weatherBgMapping[icon] || "default.jpg";
+  let bgImage = "default.jpg";
+  if (
+    weather &&
+    weather.weather &&
+    Array.isArray(weather.weather) &&
+    weather.weather.length > 0 &&
+    weather.weather[0].icon &&
+    weatherBgMapping[weather.weather[0].icon]
+  ) {
+    bgImage = weatherBgMapping[weather.weather[0].icon];
   }
 
-  // Fetch weather by city name
   async function getWeatherData(cityName = city, unitsVal = units) {
     setLoading(true);
     setError("");
@@ -67,7 +66,6 @@ export default function App() {
       const forecastData = await fetchForecast(cityName, unitsVal);
       setForecast(getDailyForecast(forecastData.list));
 
-      // Fetch AQI if coordinates are available
       if (data.coord) {
         const aqiData = await fetchAQI(data.coord.lat, data.coord.lon);
         setAqi(aqiData.list && aqiData.list[0]);
@@ -83,7 +81,6 @@ export default function App() {
     setLoading(false);
   }
 
-  // Fetch weather by coordinates (for geolocation)
   async function getWeatherByCoords(lat, lon, unitsVal = units) {
     setLoading(true);
     setError("");
@@ -96,7 +93,6 @@ export default function App() {
       setForecast(getDailyForecast(forecastData.list));
       setCity(data.name);
 
-      // Fetch AQI
       const aqiData = await fetchAQI(lat, lon);
       setAqi(aqiData.list && aqiData.list[0]);
     } catch (err) {
@@ -108,7 +104,6 @@ export default function App() {
     setLoading(false);
   }
 
-  // Handler for "Use My Location" button
   function handleUseMyLocation() {
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser.");
@@ -126,13 +121,11 @@ export default function App() {
     );
   }
 
-  // Handle search submit (prevents reload)
   function handleSearch(e) {
     e.preventDefault();
     getWeatherData(city);
   }
 
-  // Fetch suggestions for autocomplete
   async function fetchSuggestions(query) {
     if (!query) return setSuggestions([]);
     try {
@@ -140,7 +133,7 @@ export default function App() {
         `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${query}&limit=5`,
         {
           headers: {
-            "X-RapidAPI-Key": "cd42d420f2msh1d2c8fc861fea31p1c1838jsn5193ba0cc508", // Replace with your API key
+            "X-RapidAPI-Key": "cd42d420f2msh1d2c8fc861fea31p1c1838jsn5193ba0cc508",
             "X-RapidAPI-Host": "wft-geo-db.p.rapidapi.com"
           }
         }
@@ -152,7 +145,6 @@ export default function App() {
     }
   }
 
-  // Add to favourites
   function addFavourite(cityName) {
     if (!favourites.includes(cityName)) {
       const updated = [...favourites, cityName];
@@ -161,119 +153,117 @@ export default function App() {
     }
   }
 
-  // Remove from favourites
   function removeFavourite(cityName) {
     const updated = favourites.filter(c => c !== cityName);
     setFavourites(updated);
     localStorage.setItem("favourites", JSON.stringify(updated));
   }
 
-  // Fetch weather on mount and when units change
   useEffect(() => {
     getWeatherData();
     // eslint-disable-next-line
   }, [units]);
 
   return (
-    <div
-      className="weather-app"
-      style={{
-        backgroundImage: `url(${process.env.PUBLIC_URL}/backgrounds/${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        minHeight: "100vh",
-        transition: "background-image 0.5s ease-in-out"
-      }}
-    >
-      <h1 className="main-title">Weather App</h1>
+    <>
+      {/* Fixed background and overlay */}
+      <div
+        className="app-background"
+        style={{ backgroundImage: `url(/backgrounds/${bgImage})` }}
+      >
+        <div className="background-overlay"></div>
+      </div>
 
-      {/* Favourites List */}
-      {favourites.length > 0 && (
-        <div className="favourites-list" style={{ marginBottom: 12 }}>
-          {favourites.map(fav => (
+      {/* Scrollable content container */}
+      <div className="weather-app">
+        <h1 className="main-title">Weather App</h1>
+
+        {favourites.length > 0 && (
+          <div className="favourites-list" style={{ marginBottom: 12 }}>
+            {favourites.map(fav => (
+              <button
+                key={fav}
+                className="search-btn"
+                style={{ marginRight: 8, marginBottom: 4, background: "#e0e7ff", color: "#222" }}
+                onClick={() => setCity(fav)}
+                type="button"
+              >
+                {fav}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <form className="search-form" onSubmit={handleSearch}>
+          <input
+            className="search-input"
+            value={city}
+            onChange={e => {
+              setCity(e.target.value);
+              fetchSuggestions(e.target.value);
+            }}
+            list="city-suggestions"
+            placeholder="Enter city"
+            aria-label="Enter city"
+          />
+          <datalist id="city-suggestions">
+            {suggestions.map(s => (
+              <option key={s} value={s} />
+            ))}
+          </datalist>
+          <button className="search-btn" type="submit">
+            Search
+          </button>
+          <button
+            type="button"
+            className="search-btn"
+            style={{ background: "linear-gradient(90deg, #2193b0 60%, #6dd5ed 100%)" }}
+            onClick={handleUseMyLocation}
+          >
+            Use My Location
+          </button>
+        </form>
+
+        {loading && (
+          <div style={{ textAlign: "center", color: "#667eea", margin: "24px 0" }}>
+            Loading...
+          </div>
+        )}
+        {error && (
+          <div className="error-message" style={{ margin: "16px 0" }}>
+            {error}
+          </div>
+        )}
+        <WeatherCard
+          weather={weather}
+          units={units}
+          onUnitChange={setUnits}
+          forecast={forecast}
+          aqi={aqi}
+        />
+
+        {weather && (
+          favourites.includes(city) ? (
             <button
-              key={fav}
               className="search-btn"
-              style={{ marginRight: 8, marginBottom: 4, background: "#e0e7ff", color: "#222" }}
-              onClick={() => setCity(fav)}
+              style={{ background: "#f44336", marginTop: 12 }}
+              onClick={() => removeFavourite(city)}
               type="button"
             >
-              {fav}
+              Remove from Favourites
             </button>
-          ))}
-        </div>
-      )}
-
-      <form className="search-form" onSubmit={handleSearch}>
-        <input
-          className="search-input"
-          value={city}
-          onChange={e => {
-            setCity(e.target.value);
-            fetchSuggestions(e.target.value);
-          }}
-          list="city-suggestions"
-          placeholder="Enter city"
-          aria-label="Enter city"
-        />
-        <datalist id="city-suggestions">
-          {suggestions.map(s => (
-            <option key={s} value={s} />
-          ))}
-        </datalist>
-        <button className="search-btn" type="submit">
-          Search
-        </button>
-        <button
-          type="button"
-          className="search-btn"
-          style={{ background: "linear-gradient(90deg, #2193b0 60%, #6dd5ed 100%)" }}
-          onClick={handleUseMyLocation}
-        >
-          Use My Location
-        </button>
-      </form>
-
-      {loading && (
-        <div style={{ textAlign: "center", color: "#667eea", margin: "24px 0" }}>
-          Loading...
-        </div>
-      )}
-      {error && (
-        <div className="error-message" style={{ margin: "16px 0" }}>
-          {error}
-        </div>
-      )}
-      <WeatherCard
-        weather={weather}
-        units={units}
-        onUnitChange={setUnits}
-        forecast={forecast}
-        aqi={aqi}
-      />
-
-      {/* Add/Remove Favourite Button */}
-      {weather && (
-        favourites.includes(city) ? (
-          <button
-            className="search-btn"
-            style={{ background: "#f44336", marginTop: 12 }}
-            onClick={() => removeFavourite(city)}
-            type="button"
-          >
-            Remove from Favourites
-          </button>
-        ) : (
-          <button
-            className="search-btn"
-            style={{ background: "#4caf50", marginTop: 12 }}
-            onClick={() => addFavourite(city)}
-            type="button"
-          >
-            Add to Favourites
-          </button>
-        )
-      )}
-    </div>
+          ) : (
+            <button
+              className="search-btn"
+              style={{ background: "#4caf50", marginTop: 12 }}
+              onClick={() => addFavourite(city)}
+              type="button"
+            >
+              Add to Favourites
+            </button>
+          )
+        )}
+      </div>
+    </>
   );
 }
