@@ -3,6 +3,7 @@ import { fetchWeather, fetchForecast, fetchAQI } from "./api/weather";
 import WeatherCard from "./components/WeatherCard";
 import "./App.css";
 import { weatherBgMapping } from "./utils/backgroundMapping";
+import Spinner from "./components/Spinner";
 
 function getDailyForecast(forecastList) {
   const daily = {};
@@ -12,7 +13,7 @@ function getDailyForecast(forecastList) {
     daily[date].push(item);
   });
   return Object.values(daily)
-    .slice(0, 5)
+    .slice(1, 6)
     .map(dayArr => {
       const min = Math.min(...dayArr.map(d => d.main.temp_min));
       const max = Math.max(...dayArr.map(d => d.main.temp_max));
@@ -43,27 +44,22 @@ export default function App() {
   });
   const [suggestions, setSuggestions] = useState([]);
 
-  // Theme toggle state
-  const [darkMode, setDarkMode] = useState(() => {
-    // Load theme from localStorage or system preference
+  // BEST PRACTICE theme toggle: use string 'light'/'dark', persist in localStorage, check system on first load
+  const [theme, setTheme] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("theme");
-      if (saved) return saved === "dark";
-      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (saved === "light" || saved === "dark") return saved;
+      // System preference
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
     }
-    return false;
+    return "light";
   });
 
-  // Effect to update <html> class and persist theme
+  // This will **always** keep .dark class in sync with theme!
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [darkMode]);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   let bgImage = "default.jpg";
   if (
@@ -189,32 +185,28 @@ export default function App() {
 
   return (
     <>
-      {/* Fixed background and overlay */}
-     <div
-  className="app-background fixed inset-0 w-full h-full bg-cover bg-center -z-10"
-  style={{ backgroundImage: `url(/backgrounds/${bgImage})` }}
->
-  <div className="background-overlay"></div>
-</div>
+      <div
+        className="app-background fixed inset-0 w-full h-full bg-cover bg-center -z-10"
+        style={{ backgroundImage: `url(/backgrounds/${bgImage})` }}
+        role="presentation"
+        aria-hidden="true"
+      >
+        <div className="background-overlay"></div>
+      </div>
 
-
-      {/* Scrollable content container */}
-<div className="weather-app text-gray-900 dark:text-white transition-colors duration-300">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div className="weather-app text-gray-900 dark:text-white transition-colors duration-300 flex flex-col items-center min-h-screen px-2 sm:px-0">
+        <header className="w-full flex flex-col sm:flex-row justify-between items-center py-4">
           <h1 className="main-title">Weather App</h1>
-          {/* Theme Toggle Button */}
           <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200"
-            style={{ fontWeight: "bold", fontSize: "1.2em" }}
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 font-bold text-lg my-3 sm:my-0"
             aria-label="Toggle theme"
           >
-            {darkMode ? "🌙 Dark" : "☀️ Light"}
+            {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
           </button>
-        </div>
+        </header>
 
-        {/* Favourites List and Add Button */}
-        <div className="favourites-list" style={{ marginBottom: 12, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+        <nav className="favourites-list mb-3 flex flex-wrap items-center gap-2" aria-label="Favorite cities">
           {favourites.map(fav => (
             <button
               key={fav}
@@ -230,6 +222,7 @@ export default function App() {
               }}
               onClick={() => getWeatherData(fav)}
               type="button"
+              aria-label={`Get weather for ${fav}`}
             >
               <span style={{ marginRight: 6, color: "#ff3366", fontSize: "1.1em" }}>❤️</span>
               {fav}
@@ -248,14 +241,15 @@ export default function App() {
               }}
               onClick={() => addFavourite(city)}
               type="button"
+              aria-label={`Add ${city} to favourites`}
             >
               <span style={{ marginRight: 6, fontSize: "1.2em" }}>🤍</span>
               Add to Favourites
             </button>
           )}
-        </div>
+        </nav>
 
-        <form className="search-form" onSubmit={handleSearch}>
+        <form className="search-form mb-6" onSubmit={handleSearch} role="search" aria-label="City weather search">
           <input
             className="search-input"
             value={city}
@@ -266,13 +260,17 @@ export default function App() {
             list="city-suggestions"
             placeholder="Enter city"
             aria-label="Enter city"
+            aria-autocomplete="list"
+            aria-controls="city-suggestions"
+            autoComplete="off"
+            required
           />
           <datalist id="city-suggestions">
             {suggestions.map(s => (
               <option key={s} value={s} />
             ))}
           </datalist>
-          <button className="search-btn" type="submit">
+          <button className="search-btn" type="submit" aria-label="Search city">
             Search
           </button>
           <button
@@ -280,21 +278,20 @@ export default function App() {
             className="search-btn"
             style={{ background: "linear-gradient(90deg, #2193b0 60%, #6dd5ed 100%)" }}
             onClick={handleUseMyLocation}
+            aria-label="Use my location"
           >
             Use My Location
           </button>
         </form>
 
-        {loading && (
-          <div style={{ textAlign: "center", color: "#667eea", margin: "24px 0" }}>
-            Loading...
-          </div>
-        )}
+        {loading && <Spinner />}
+
         {error && (
           <div className="error-message" style={{ margin: "16px 0" }}>
             {error}
           </div>
         )}
+
         <WeatherCard
           weather={weather}
           units={units}
@@ -309,6 +306,7 @@ export default function App() {
             style={{ background: "#f44336", marginTop: 12, fontWeight: "bold" }}
             onClick={() => removeFavourite(city)}
             type="button"
+            aria-label={`Remove ${city} from favourites`}
           >
             <span style={{ marginRight: 6, fontSize: "1.1em" }}>💔</span>
             Remove from Favourites
