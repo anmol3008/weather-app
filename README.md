@@ -66,26 +66,46 @@ weather-app/
 
 ## 🖼️ Screenshots
 
-## 🖼️ Screenshots
+### 🌑 Dark Mode  
+Experience stunning weather visuals with a modern dark interface — easy on the eyes, perfect for night and low-light use.
 
-### 🌑 Dark Mode Views
 ![Dark Home](./screenshots/dark-home.png)
 ![Dark UI](./screenshots/dark-ui.png)
 ![Dark Mode](./screenshots/dark-mode.png)
 
-### 🌞 Light Mode Views
-![Light UI](./screenshots/light-ui.png)
-![Light Mode](./screenshots/light-mode.png)
+---
 
-### 🔍 Features & Views
+### 🌞 Light Mode  
+Enjoy a fresh, bright layout with crisp details and vibrant weather info, ideal for daytime and high contrast.
+
+![Light Home](./screenshots/light-ui.png)
+![Light UI](./screenshots/light-mode.png)
+
+
+#### 🔎 Search  
+Effortlessly find weather by typing any city name.  
 ![Search](./screenshots/search.png)
-![Hourly Forecast](./screenshots/hourly.png)
-![5 Day Forecast](./screenshots/5-days.png)
-![Favourites](./screenshots/favourites.png)
-![Humidity & AQI](./screenshots/stats.png)
 
-### 📱 Mobile View
+#### 🕒 Hourly Forecast  
+Hourly temperature and conditions at a glance.  
+![Hourly](./screenshots/hourly.png)
+
+#### 📅 5-Day Forecast  
+Stay ready with a five-day outlook.  
+![5 Days](./screenshots/5-days.png)
+
+#### ⭐ Favourites  
+Save your go-to cities for quick access.  
+![Favourites](./screenshots/favourites.png)
+
+#### 📱 Mobile View  
+Responsive and smooth — great on any screen.  
 ![Mobile View](./screenshots/mobile-view.png)
+
+#### 📊 Weather Stats  
+All stats in one view: humidity, precipitation, wind, AQI, sunrise & sunset.  
+![Stats](./screenshots/stats.png)
+
 
 ---
 
