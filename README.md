@@ -1,7 +1,7 @@
 # 🌤️ Mawesome Weather App
 
 **Mawesome** is a modern weather forecasting web app built with **React**, **Vite**, and **Tailwind CSS**, using real-time data from the **OpenWeatherMap API**.  
-It features clean design, responsive layout, dynamic backgrounds, current location support, and a smooth user experience — perfect for showcasing on your portfolio or resume 🚀
+It features clean design, responsive layout, dynamic backgrounds, current location support, and a smooth user experience
 
 👉 **Live Demo:** [https://mawesome.vercel.app](https://mawesome.vercel.app)
 
@@ -32,35 +32,47 @@ It features clean design, responsive layout, dynamic backgrounds, current locati
 
 ## 🚀 Getting Started
 
-To run the app locally:
+To set up and run this project locally:
 
-Clone this repository
+1. **Clone the repository**
+
 git clone https://github.com/anmol3008/weather-app.git
+
 cd weather-app
 
-Install dependencies
+
+2. **Install dependencies**
+
 npm install
 
-Start the development server
+
+3. **Start the development server**
+
 npm run dev
 
-To build for production
+
+4. **Create a production build**
+
 npm run build
+
 
 ---
 
 ## 📦 Folder Structure
 
+
 weather-app/
-│
 ├── public/ # Static files
-├── src/ # Main source code
-│ ├── assets/ # Background images & icons
-│ ├── components/ # React components
-│ ├── App.jsx # Root app component
+├── src/ # Application source code
+│ ├── assets/ # Background images & weather icons
+│ ├── components/ # Reusable React components
+│ ├── App.jsx # Root component
 │ └── main.jsx # Entry point
-├── index.html # HTML template
-├── tailwind.config.js # Tailwind customization
+├── index.html # Base HTML template
+├── tailwind.config.js # Tailwind CSS configuration
+├── README.md # Project documentation
+└── package.json # Project metadata and scripts
+
 
 ---
 
@@ -81,26 +93,37 @@ Enjoy a fresh, bright layout with crisp details and vibrant weather info, ideal 
 ![Light Home](./screenshots/light-ui.png)
 ![Light UI](./screenshots/light-mode.png)
 
+---
 
 #### 🔎 Search  
 Effortlessly find weather by typing any city name.  
 ![Search](./screenshots/search.png)
 
+---
+
 #### 🕒 Hourly Forecast  
 Hourly temperature and conditions at a glance.  
 ![Hourly](./screenshots/hourly.png)
+
+---
 
 #### 📅 5-Day Forecast  
 Stay ready with a five-day outlook.  
 ![5 Days](./screenshots/5-days.png)
 
+---
+
 #### ⭐ Favourites  
 Save your go-to cities for quick access.  
 ![Favourites](./screenshots/favourites.png)
 
+---
+
 #### 📱 Mobile View  
 Responsive and smooth — great on any screen.  
 ![Mobile View](./screenshots/mobile-view.png)
+
+---
 
 #### 📊 Weather Stats  
 All stats in one view: humidity, precipitation, wind, AQI, sunrise & sunset.  
