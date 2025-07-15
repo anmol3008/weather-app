@@ -279,7 +279,7 @@ export default function App() {
         {loading && <Spinner />}
         {error && <div className="error-message">{error}</div>}
 
-        {/* Weather Card Component */}
+        {/* Weather Card Component (handles forecast and hourly) */}
         <WeatherCard
           weather={weather}
           units={units}
