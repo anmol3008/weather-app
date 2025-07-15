@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Lottie from "lottie-react";
-
 import cloudyNight from "../animations/cloudy-night.json";
 import night from "../animations/night.json";
 import rainyNight from "../animations/rainy-night.json";
@@ -19,9 +18,11 @@ import aqiIcon from "../assets/icons/aqi.png";
 import sunriseIcon from "../assets/icons/sunrise.png";
 import sunsetIcon from "../assets/icons/sunset.png";
 
-import { weatherToAnimation } from "../utils/weatherAnimationMap.js";
+import HourlyForecast from "./HourlyForecast"; // ✅ graph component
+import { weatherToAnimation } from "../utils/weatherAnimationMap";
 import "./WeatherCard.css";
 
+// Animation mapping
 const animationMap = {
   "cloudy-night": cloudyNight,
   night,
@@ -35,6 +36,7 @@ const animationMap = {
   windy,
 };
 
+// Format Sunrise/Sunset
 function formatTime(unix, timezone) {
   const date = new Date((unix + timezone) * 1000);
   return date.toLocaleTimeString("en-US", {
@@ -45,12 +47,23 @@ function formatTime(unix, timezone) {
   });
 }
 
+// Format Forecast Days
 function getDayLabel(idx, dt) {
   if (idx === 0) return "Tomorrow";
-  return new Date(dt * 1000).toLocaleDateString(undefined, { weekday: "short" });
+  return new Date(dt * 1000).toLocaleDateString(undefined, {
+    weekday: "short",
+  });
 }
 
-export default function WeatherCard({ weather, units, onUnitChange, forecast, aqi }) {
+// Main Component
+export default function WeatherCard({
+  weather,
+  units,
+  onUnitChange,
+  forecast,
+  aqi,
+  hourlyForecast,
+}) {
   if (!weather) return null;
 
   const [now, setNow] = useState(new Date());
@@ -63,14 +76,38 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast, aq
   const weatherType = weatherArr[0];
   const animationKey = weatherToAnimation(weatherType);
   const animationData = animationMap[animationKey];
-  const aqiLevel = aqi ? ["Good", "Fair", "Moderate", "Poor", "Very Poor"][aqi.main.aqi - 1] : null;
+
+  const aqiLevel =
+    aqi ? ["Good", "Fair", "Moderate", "Poor", "Very Poor"][aqi.main.aqi - 1] : null;
+
+  // Share Button Logic
+  function handleShare() {
+    const shareData = {
+      title: "Weather at " + name,
+      text: `Current weather in ${name}: ${Math.round(main.temp)}°${
+        units === "metric" ? "C" : "F"
+      }, ${weatherType.description}.`,
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      navigator.share(shareData).catch(() => {
+        alert("Sharing not supported.");
+      });
+    } else {
+      navigator.clipboard.writeText(
+        `${shareData.title}\n${shareData.text}\n${shareData.url}`
+      );
+      alert("Weather info copied to clipboard.");
+    }
+  }
 
   return (
     <section className="weather-card">
+      {/* -- Top Section -- */}
       <div className="current-weather-row">
         <div className="weather-icon-wrapper">
           {animationData ? (
-            <Lottie animationData={animationData} loop={true} style={{ width: 80, height: 80 }} />
+            <Lottie animationData={animationData} loop style={{ width: 80, height: 80 }} />
           ) : (
             <img
               src={`https://openweathermap.org/img/wn/${weatherType.icon}@4x.png`}
@@ -85,8 +122,7 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast, aq
             {sys?.country && <span className="country-name">, {sys.country}</span>}
           </h2>
           <div className="temperature">
-            {Math.round(main.temp)}°
-            <span>{units === "metric" ? "C" : "F"}</span>
+            {Math.round(main.temp)}°{units === "metric" ? "C" : "F"}
           </div>
           <div className="current-datetime">
             {now.toLocaleDateString(undefined, {
@@ -95,36 +131,102 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast, aq
               month: "short",
               day: "numeric",
             })}{" "}
-            {now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            {now.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </div>
           <p className="weather-description">{weatherType.description}</p>
+
+          {/* Share */}
+          <button
+            className="share-btn"
+            style={{
+              marginTop: 10,
+              background: "#667eea",
+              color: "#fff",
+              borderRadius: 8,
+              padding: "8px 18px",
+              border: "none",
+              fontWeight: 600,
+              fontSize: "1em",
+              cursor: "pointer",
+            }}
+            onClick={handleShare}
+          >
+            Share Weather
+          </button>
+
+          {/* Unit Switch */}
           <div className="unit-switch" role="group" aria-label="Switch units">
             <button
               onClick={() => onUnitChange("metric")}
               className={`search-btn ${units === "metric" ? "active" : ""}`}
               aria-pressed={units === "metric"}
-            >°C</button>
+            >
+              °C
+            </button>
             <button
               onClick={() => onUnitChange("imperial")}
               className={`search-btn ${units === "imperial" ? "active" : ""}`}
               aria-pressed={units === "imperial"}
-            >°F</button>
+            >
+              °F
+            </button>
           </div>
         </div>
       </div>
 
+      {/* -- Weather Details -- */}
       <div className="weather-details">
         <DetailItem icon={humidityIcon} label="Humidity" value={`${main.humidity}%`} />
-        <DetailItem icon={windIcon} label="Wind" value={`${wind.speed} ${units === "metric" ? "m/s" : "mph"}`} />
-        <DetailItem icon={precipitationIcon} label="Precipitation"
-          value={weather.rain?.["1h"] ? `${weather.rain["1h"]} mm`
-            : weather.snow?.["1h"] ? `${weather.snow["1h"]} mm` : "0 mm"} />
-        <DetailItem icon={aqiIcon} label="Air Quality"
-          value={aqi ? <span className="aqi-value">{aqi.main.aqi} ({aqiLevel})</span> : "N/A"} />
-        <DetailItem icon={sunriseIcon} label="Sunrise" value={formatTime(sys.sunrise, timezone)} />
-        <DetailItem icon={sunsetIcon} label="Sunset" value={formatTime(sys.sunset, timezone)} />
+        <DetailItem
+          icon={windIcon}
+          label="Wind"
+          value={`${wind.speed} ${units === "metric" ? "m/s" : "mph"}`}
+        />
+        <DetailItem
+          icon={precipitationIcon}
+          label="Precipitation"
+          value={
+            weather.rain?.["1h"]
+              ? `${weather.rain["1h"]} mm`
+              : weather.snow?.["1h"]
+              ? `${weather.snow["1h"]} mm`
+              : "0 mm"
+          }
+        />
+        <DetailItem
+          icon={aqiIcon}
+          label="Air Quality"
+          value={
+            aqi ? (
+              <span className="aqi-value">
+                {aqi.main.aqi} ({aqiLevel})
+              </span>
+            ) : (
+              "N/A"
+            )
+          }
+        />
+        <DetailItem
+          icon={sunriseIcon}
+          label="Sunrise"
+          value={formatTime(sys.sunrise, timezone)}
+        />
+        <DetailItem
+          icon={sunsetIcon}
+          label="Sunset"
+          value={formatTime(sys.sunset, timezone)}
+        />
       </div>
 
+      {/* -- Hourly Chart (📈 Your New Feature) -- */}
+      {hourlyForecast && hourlyForecast.length > 0 && (
+        <HourlyForecast list={hourlyForecast} units={units} />
+      )}
+
+      {/* -- 5-Day Forecast -- */}
       {forecast?.length > 0 && (
         <div className="forecast-section">
           <h3 className="forecast-title">Next 5 Days</h3>
@@ -138,7 +240,7 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast, aq
                   <span className="forecast-day">{getDayLabel(idx, f.dt)}</span>
                   <div className="forecast-icon-wrapper">
                     {forecastAnimData ? (
-                      <Lottie animationData={forecastAnimData} loop={true} style={{ width: 40, height: 40 }} />
+                      <Lottie animationData={forecastAnimData} loop style={{ width: 40, height: 40 }} />
                     ) : (
                       <img
                         src={`https://openweathermap.org/img/wn/${forecastType.icon}@2x.png`}
@@ -162,8 +264,11 @@ export default function WeatherCard({ weather, units, onUnitChange, forecast, aq
   );
 }
 
+// Reusable Details Row
 function DetailItem({ icon, label, value }) {
-  const valueClass = label === "Air Quality" ? "detail-value aqi-value" : "detail-value";
+  const valueClass =
+    label === "Air Quality" ? "detail-value aqi-value" : "detail-value";
+
   return (
     <div className="detail-item" aria-label={label}>
       <img src={icon} alt={label} className="detail-icon" />

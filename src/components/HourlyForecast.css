@@ -1,0 +1,68 @@
+.hourly-forecast-graph {
+  margin: 18px 0 13px 0;
+  padding: 10px 10px 2px 6px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(124, 145, 255, 0.05);
+  overflow: visible !important;
+}
+.dark .hourly-forecast-graph {
+  background: #181e36;
+  color: #fff;
+}
+.hourly-title {
+  color: #667eea;
+  font-size: 1.12em;
+  font-weight: 700;
+  margin-bottom: 13px;
+  margin-top: 5px;
+}
+.dark .hourly-title { color: #a5b4fc; }
+
+.hourly-forecast-graph .recharts-wrapper {
+  min-width: 100%;
+  max-width: 100%;
+  overflow: visible !important;
+}
+.hourly-forecast-graph .recharts-surface {
+  overflow: visible !important;
+}
+
+.hourly-tooltip {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 15px rgba(102,126,234,0.16);
+  padding: 14px 18px 10px 18px;
+  font-size: 1em;
+  color: #232648;
+  min-width: 90px;
+  pointer-events: auto;
+  border: none;
+  position: relative;
+  font-family: inherit;
+}
+.hourly-tooltip.dark {
+  background: #22264a;
+  color: #fff;
+  box-shadow: 0 3px 20px rgba(50,45,98,0.22);
+}
+.hourly-tooltip button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+}
+@media (max-width: 600px) {
+  .hourly-forecast-graph {
+    padding: 2px 0 2px 0;
+    min-width: 0;
+    overflow: visible !important;
+  }
+  .hourly-title {
+    font-size: 1em;
+  }
+  .hourly-tooltip { font-size: 0.98em; min-width: 0; }
+}
