@@ -1,10 +1,11 @@
 .hourly-forecast-graph {
   margin: 18px 0 13px 0;
   padding: 10px 10px 2px 6px;
-  background: rgba(255,255,255,0.92);
+  background: #e7ebff; /* your blue background */
   border-radius: 16px;
   box-shadow: 0 2px 16px rgba(124, 145, 255, 0.05);
   overflow: visible !important;
+  min-width: 250px;
 }
 .dark .hourly-forecast-graph {
   background: #181e36;
@@ -18,7 +19,6 @@
   margin-top: 5px;
 }
 .dark .hourly-title { color: #a5b4fc; }
-
 .hourly-forecast-graph .recharts-wrapper {
   min-width: 100%;
   max-width: 100%;
@@ -27,7 +27,6 @@
 .hourly-forecast-graph .recharts-surface {
   overflow: visible !important;
 }
-
 .hourly-tooltip {
   background: #fff;
   border-radius: 8px;
