@@ -7,6 +7,7 @@ import {
 } from "./api/weather";
 import WeatherCard from "./components/WeatherCard";
 import Spinner from "./components/Spinner";
+import Header from "./components/Header"; // <-- import your new header
 import { weatherBgMapping } from "./utils/backgroundMapping";
 import "./App.css";
 
@@ -19,7 +20,7 @@ function getDailyForecast(forecastList) {
   });
 
   return Object.values(daily)
-    .slice(1, 6)
+    .slice(0, 5)
     .map((dayArr) => {
       const min = Math.min(...dayArr.map((d) => d.main.temp_min));
       const max = Math.max(...dayArr.map((d) => d.main.temp_max));
@@ -209,20 +210,14 @@ export default function App() {
         <div className="background-overlay"></div>
       </div>
 
+      {/* Mawesome Header */}
+      <Header
+        theme={theme}
+        setTheme={setTheme}
+      />
+
       {/* Main App */}
       <div className="weather-app text-gray-900 dark:text-white flex flex-col items-center min-h-screen">
-        {/* Header */}
-        <header className="w-full flex flex-col sm:flex-row justify-between items-center py-4">
-          <h1 className="main-title">Weather App</h1>
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white font-bold text-lg my-3 sm:my-0"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
-          </button>
-        </header>
-
         {/* Favourites List */}
         <nav className="favourites-list mb-3 flex flex-wrap items-center gap-2">
           {favourites.map((fav) => (
