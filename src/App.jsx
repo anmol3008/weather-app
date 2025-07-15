@@ -43,6 +43,28 @@ export default function App() {
   });
   const [suggestions, setSuggestions] = useState([]);
 
+  // Theme toggle state
+  const [darkMode, setDarkMode] = useState(() => {
+    // Load theme from localStorage or system preference
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("theme");
+      if (saved) return saved === "dark";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
+
+  // Effect to update <html> class and persist theme
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
   let bgImage = "default.jpg";
   if (
     weather &&
@@ -72,7 +94,7 @@ export default function App() {
       } else {
         setAqi(null);
       }
-      setCity(data.name); // Ensure city is updated to canonical name
+      setCity(data.name);
     } catch (err) {
       setError(err.message || "Failed to fetch weather data.");
       setWeather(null);
@@ -168,16 +190,28 @@ export default function App() {
   return (
     <>
       {/* Fixed background and overlay */}
-      <div
-        className="app-background"
-        style={{ backgroundImage: `url(/backgrounds/${bgImage})` }}
-      >
-        <div className="background-overlay"></div>
-      </div>
+     <div
+  className="app-background fixed inset-0 w-full h-full bg-cover bg-center -z-10"
+  style={{ backgroundImage: `url(/backgrounds/${bgImage})` }}
+>
+  <div className="background-overlay"></div>
+</div>
+
 
       {/* Scrollable content container */}
-      <div className="weather-app">
-        <h1 className="main-title">Weather App</h1>
+<div className="weather-app text-gray-900 dark:text-white transition-colors duration-300">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h1 className="main-title">Weather App</h1>
+          {/* Theme Toggle Button */}
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200"
+            style={{ fontWeight: "bold", fontSize: "1.2em" }}
+            aria-label="Toggle theme"
+          >
+            {darkMode ? "🌙 Dark" : "☀️ Light"}
+          </button>
+        </div>
 
         {/* Favourites List and Add Button */}
         <div className="favourites-list" style={{ marginBottom: 12, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
