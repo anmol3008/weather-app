@@ -3,7 +3,7 @@
 **Mawesome** is a modern weather forecasting web app built with **React**, **Vite**, and **Tailwind CSS**, using real-time data from the **OpenWeatherMap API**.  
 It features clean design, responsive layout, dynamic backgrounds, current location support, and a smooth user experience
 
-👉 **Live Demo:** [https://mawesome.vercel.app](https://mawesome.vercel.app)
+👉 **Live Demo:** [https://mawesome-weather.vercel.app](https://mawesome-weather.vercel.app)
 
 ---
 
@@ -142,7 +142,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 **Anmol Kumar**  
 🔗 [GitHub](https://github.com/anmol3008)  
-🌐 [Live Site](https://mawesome.vercel.app)
+🌐 [Live Site](https://mawesome-weather.vercel.app)
 
 ---
 
