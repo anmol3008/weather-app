@@ -58,24 +58,6 @@ npm run build
 
 ---
 
-## 📦 Folder Structure
-
-
-weather-app/
-├── public/ # Static files
-├── src/ # Application source code
-│ ├── assets/ # Background images & weather icons
-│ ├── components/ # Reusable React components
-│ ├── App.jsx # Root component
-│ └── main.jsx # Entry point
-├── index.html # Base HTML template
-├── tailwind.config.js # Tailwind CSS configuration
-├── README.md # Project documentation
-└── package.json # Project metadata and scripts
-
-
----
-
 ## 🖼️ Screenshots
 
 ### 🌑 Dark Mode  
